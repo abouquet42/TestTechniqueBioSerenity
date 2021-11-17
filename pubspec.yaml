@@ -29,7 +29,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_localizations:
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -38,6 +39,20 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flappy_translator: ^2.0.0-nullsafety.2
+flappy_translator:
+  input_file_path: "assets/i18n/i18n.csv"
+  output_dir: "lib/core/translations"
+  file_name: "i18n"
+  class_name: "I18n"
+  delimiter: ","
+  start_index: 1
+  depend_on_context: false
+  use_single_quotes: false
+  replace_no_break_spaces: false
+  expose_get_string: false
+  expose_loca_strings: false
+  expose_locale_maps: false
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

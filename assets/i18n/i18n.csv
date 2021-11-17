@@ -1,0 +1,7 @@
+keys,en,fr
+appTitle,BioSerenity Test,Test BioSerenity
+errorGetDataLabel,Impossible to data,Impossible de récupérer les données
+errorGetSpeedLabel,Impossible to get speed,Impossible de récupérer la vitesse
+speedMaxLabel,Speed max,Vitese maximum
+cvLabel,Power (CV), Puissance (CV)
+nameLabel,Model,Modèle
