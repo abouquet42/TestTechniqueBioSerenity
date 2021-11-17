@@ -3,10 +3,14 @@ import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:test_bio_serenity/core/blocs/choose_type/choose_type_bloc.dart';
 import 'package:test_bio_serenity/core/blocs/get_car_speed/get_car_speed_bloc.dart';
 import 'package:test_bio_serenity/core/models/car.dart';
+import 'package:test_bio_serenity/core/models/speed_data.dart';
 import 'package:test_bio_serenity/core/translations/i18n.dart';
+import 'package:test_bio_serenity/ui/toggle_switch_custom.dart';
 import 'package:test_bio_serenity/ui/utils.dart';
 
 import '../app_theme.dart';
@@ -29,6 +33,9 @@ class _CarDetailsState extends State<CarDetails> {
   late GetCarSpeedBloc _getCarSpeedBloc;
   double height = 50.0;
   int speedValue = 0;
+  List<SpeedData> data = [];
+  bool carStarted = true;
+  int displayChart = 0;
 
   @override
   void initState() {
@@ -99,7 +106,7 @@ class _CarDetailsState extends State<CarDetails> {
                             ),
                           ],
                         ),
-                        height: 150,
+                        height: 130,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
@@ -148,13 +155,28 @@ class _CarDetailsState extends State<CarDetails> {
                         ),
                       ),
                       const SizedBox(height: 32,),
+                      BlocBuilder<ChooseTypeBloc, ChooseTypeState>(
+                        builder: (context, state) {
+                          if (state is ChooseTypeSuccess) {
+                            if (state.type == 0) {
+                              return ToggleSwitchCustom(initialIndex: 0);
+                            } else {
+                              return ToggleSwitchCustom(initialIndex: 1);
+                            }
+                          }
+                          return ToggleSwitchCustom(initialIndex: 0);
+                        },
+                      ),
+                      const SizedBox(height: 16,),
                       SizedBox(
                         height: 300,
                         child: BlocListener(
                           bloc: _getCarSpeedBloc,
                           listener: (context, state) {
                             if (state is GetCarSpeedSuccess) {
+                              final now = DateTime.now();
                               setState(() {
+                                data.add(SpeedData(now.toIso8601String().substring(11), state.speed));
                                 speedValue = state.speed;
                               });
                             } else if (state is GetCarSpeedError) {
@@ -166,36 +188,75 @@ class _CarDetailsState extends State<CarDetails> {
                               );
                             }
                           },
-                          child: SfRadialGauge(
-                            enableLoadingAnimation: true,
-                            animationDuration: 3500,
-                            axes: <RadialAxis>[
-                              RadialAxis(
-                                minimum: 0,
-                                maximum: widget.car.speedMax.toDouble(),
-                                ranges: <GaugeRange>[
-                                  GaugeRange(startValue: 0, endValue: widget.car.speedMax/3, color:Colors.green),
-                                  GaugeRange(startValue: widget.car.speedMax/3, endValue: widget.car.speedMax - widget.car.speedMax/4, color: Colors.orange),
-                                  GaugeRange(startValue: widget.car.speedMax - widget.car.speedMax/4, endValue: widget.car.speedMax.toDouble(), color: Colors.red),
-                                ],
-                                pointers: <GaugePointer>[NeedlePointer(value: speedValue.toDouble())],
-                                annotations: <GaugeAnnotation>[
-                                  GaugeAnnotation(
-                                    widget: Container(
-                                      child: Text(
-                                        speedValue.toString(),
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                          child: BlocBuilder<ChooseTypeBloc, ChooseTypeState>(
+                            builder: (context, state) {
+                              if (state is ChooseTypeSuccess) {
+                                if (state.type == 0) {
+                                  return SfCartesianChart(
+                                    primaryXAxis: CategoryAxis(),
+                                    title: ChartTitle(text: I18n.speedOvtLabel),
+                                    legend: Legend(isVisible: true, position: LegendPosition.bottom),
+                                    tooltipBehavior: TooltipBehavior(enable: true),
+                                    series: <ChartSeries<SpeedData, String>>[
+                                      LineSeries<SpeedData, String>(
+                                        dataSource: data,
+                                        xValueMapper: (SpeedData sales, _) => sales.time,
+                                        yValueMapper: (SpeedData sales, _) => sales.speed,
+                                        name: I18n.speedLabel,
+                                        dataLabelSettings: DataLabelSettings(isVisible: true),
                                       ),
-                                    ),
-                                    angle: 90,
-                                    positionFactor: 0.5,
+                                    ],
+                                  );
+                                } else {
+                                  return SfRadialGauge(
+                                    enableLoadingAnimation: true,
+                                    animationDuration: 3500,
+                                    axes: <RadialAxis>[
+                                      RadialAxis(
+                                        minimum: 0,
+                                        maximum: widget.car.speedMax.toDouble(),
+                                        ranges: <GaugeRange>[
+                                          GaugeRange(startValue: 0, endValue: widget.car.speedMax/3, color:Colors.green),
+                                          GaugeRange(startValue: widget.car.speedMax/3, endValue: widget.car.speedMax - widget.car.speedMax/4, color: Colors.orange),
+                                          GaugeRange(startValue: widget.car.speedMax - widget.car.speedMax/4, endValue: widget.car.speedMax.toDouble(), color: Colors.red),
+                                        ],
+                                        pointers: <GaugePointer>[NeedlePointer(value: speedValue.toDouble())],
+                                        annotations: <GaugeAnnotation>[
+                                          GaugeAnnotation(
+                                            widget: Container(
+                                              child: Text(
+                                                speedValue.toString(),
+                                                style: TextStyle(
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            angle: 90,
+                                            positionFactor: 0.5,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                }
+                              }
+                              return SfCartesianChart(
+                                primaryXAxis: CategoryAxis(),
+                                title: ChartTitle(text: I18n.speedOvtLabel),
+                                legend: Legend(isVisible: true, position: LegendPosition.bottom),
+                                tooltipBehavior: TooltipBehavior(enable: true),
+                                series: <ChartSeries<SpeedData, String>>[
+                                  LineSeries<SpeedData, String>(
+                                    dataSource: data,
+                                    xValueMapper: (SpeedData sales, _) => sales.time,
+                                    yValueMapper: (SpeedData sales, _) => sales.speed,
+                                    name: I18n.speedLabel,
+                                    dataLabelSettings: DataLabelSettings(isVisible: true),
                                   ),
                                 ],
-                              ),
-                            ],
+                              );
+                            },
                           ),
                         ),
                       ),
