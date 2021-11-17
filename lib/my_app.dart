@@ -6,6 +6,7 @@ import 'package:test_bio_serenity/ui/router.dart' as router;
 import 'package:test_bio_serenity/ui/home.dart';
 
 import 'app_theme.dart';
+import 'core/blocs/choose_type/choose_type_bloc.dart';
 import 'core/blocs/get_cars/get_cars_bloc.dart';
 import 'core/translations/i18n.dart';
 
@@ -18,8 +19,15 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    return BlocProvider(
-      create: (BuildContext context) => GetCarsBloc()..add(GetAllCars()),
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<ChooseTypeBloc>(
+            create: (BuildContext context) => ChooseTypeBloc(),
+          ),
+          BlocProvider<GetCarsBloc>(
+            create: (BuildContext context) => GetCarsBloc()..add(GetAllCars()),
+          ),
+        ],
       child: AppTheme(
         child: MaterialApp(
           title: 'Test BioSerenity',
