@@ -19,6 +19,14 @@ class I18n {
 
   static String get nameLabel => _getText("nameLabel");
 
+  static String get speedOvtLabel => _getText("speedOvtLabel");
+
+  static String get speedLabel => _getText("speedLabel");
+
+  static String get chartButton => _getText("chartButton");
+
+  static String get counterButton => _getText("counterButton");
+
   static late Map<String, String> _localizedValues;
 
   static const _enValues = {
@@ -28,6 +36,10 @@ class I18n {
     "speedMaxLabel": "Speed max",
     "cvLabel": "Power (CV)",
     "nameLabel": "Model",
+    "speedOvtLabel": "Speed overt the time",
+    "speedLabel": "Speed",
+    "chartButton": "Chart",
+    "counterButton": "Counter",
   };
 
   static const _frValues = {
@@ -37,6 +49,10 @@ class I18n {
     "speedMaxLabel": "Vitese maximum",
     "cvLabel": " Puissance (CV)",
     "nameLabel": "Modèle",
+    "speedOvtLabel": "Vitesse au cours du temps",
+    "speedLabel": "Vitesse",
+    "chartButton": "Graphique",
+    "counterButton": "Compteur",
   };
 
   static const _allValues = {
