@@ -1,16 +1,11 @@
 # test_bio_serenity
 
-Test Flutter
+Test Flutter for BioSerenity
 
-## Getting Started
+## Requirements
 
-This project is a starting point for a Flutter application.
+Flutter version 2.5.3
 
-A few resources to get you started if this is your first Flutter project:
+Dart version 2.14.4
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This version is optimized for iOS and Web.
